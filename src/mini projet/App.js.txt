@@ -1,0 +1,44 @@
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import Login from './login';
+import Accueil from './Accueil';
+import AjouterProduit from './AjouterProduit';
+import ModifierProduit from './ModifierProduit';
+
+function App() {
+    const navigate = useNavigate();
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [user, setUser] = useState('');
+  const [produits, setProduits] = useState([]);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+ 
+  const addProduct = (product) => setProduits([...produits, product]);
+  const deleteProduct = (reference) => setProduits(produits.filter(p => p.reference !== reference));
+  const updateProduct = (updatedProduct) => {
+    setProduits(produits.map(p => (p.reference === updatedProduct.reference ? updatedProduct : p)));
+  };
+
+  const handleEditProduct = (product) => {
+    setSelectedProduct(product);
+    navigate('/modifier');
+  };
+
+  return (
+    <Router>
+      <div>
+        {!loggedIn ? (
+          <Login setLoggedIn={setLoggedIn} setUser={setUser} />
+        ) : (
+          <Routes>
+            <Route path="/" element={<Accueil user={user} />} />
+            <Route path="/ajouter" element={<AjouterProduit onAddProduct={addProduct} />} />
+            <Route path="/modifier" element={<ModifierProduit product={selectedProduct} onUpdateProduct={updateProduct} />} />
+          </Routes>
+        )}
+      </div>
+    </Router>
+  );
+}
+
+export default App;

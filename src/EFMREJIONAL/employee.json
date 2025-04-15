@@ -1,0 +1,23 @@
+[
+    {
+        "id":1,
+        "image":"WIN_20241123_14_39_52_Pro.jpg",
+        "nom":"Ahmed",
+        "prenom":"guizi",
+        "fonction":"hhhh"
+},
+    {
+        "id":2,
+        "image":"WIN_20241123_14_39_52_Pro.jpg",
+        "nom":"ziyad",
+        "prenom":"riyad",
+        "fonction":"yyyy"
+},
+    {
+        "id":3,
+        "image":"WIN_20241123_14_39_52_Pro.jpg",
+        "nom":"Achraf",
+        "prenom":"guizi",
+        "fonction":"uuuuu"
+}
+]

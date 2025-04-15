@@ -1,0 +1,14 @@
+.employe {
+  text-align: center;
+  margin: 10px;
+}
+
+.employe img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+}
+
+.employe p {
+  font-weight: bold;
+}

@@ -1,0 +1,14 @@
+[
+    {
+       "id":1, "nom:":"Ahmed","prenom":"guizi","Age":20
+    },
+    {
+      "id":2,  "nom:":"achraf","prenom":"guizi","Age":18
+    },
+    {
+       "id":3, "nom:":"Anwar","prenom":"guizi","Age":16
+    },
+    {
+       "id":4, "nom:":"sohayla","prenom":"guizi","Age":14
+    }
+]

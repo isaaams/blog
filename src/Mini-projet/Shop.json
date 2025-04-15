@@ -1,0 +1,10 @@
+
+
+
+[
+    { "id": 1,"PHOTO":"", "marque": "Toyota", "model": "Carmy", "year": 2015, "prix":10000 },
+    { "id": 2,"PHOTO":"", "marque": "Honda", "model": "Civic", "year": 2018, "prix":15000 },
+    { "id": 3,"PHOTO":"", "marque": "Ford", "model": "Mustang", "year": 2022, "prix":30000 },
+    { "id": 4,"PHOTO":"", "marque": "BMW", "model": "X5", "year": 2020, "prix":25000 },
+    { "id": 5,"PHOTO":"", "marque": "Mercedes", "model": "C-Class", "year": 2019, "prix": 20000 }
+  ]
