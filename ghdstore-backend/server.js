@@ -8,6 +8,7 @@ const path = require("path");
 const router = express.Router();
 const fs = require('fs');
 
+
 // المسار الكامل للمجلد uploads
 const uploadDir = path.join(__dirname, 'uploads');
 
@@ -164,50 +165,49 @@ app.delete('/products/:id', (req, res) => {
   });
 });
 
-// عملية الشراء (Checkout)
 app.post('/checkout', (req, res) => {
   const { userId, products, totalPrice, address, paymentMethod } = req.body;
 
-  db.beginTransaction((err) => {
-    if (err) return res.status(500).json({ message: 'Transaction error' });
+  const productIds = products.map(p => p.id);
 
-    const orderQuery = `
-      INSERT INTO orders (user_id, total_price, address, payment_method)
-      VALUES (?, ?, ?, ?)
+  const getProductsQuery = `SELECT id, name, price, image FROM products WHERE id IN (?)`;
+  console.log('Produits demandés:', productIds);
+  db.query(getProductsQuery, [productIds], (err, results) => {
+    if (err) return res.status(500).json({ message: 'Erreur lors de la récupération des produits' });
+
+    const fullProducts = results.map(prod => {
+      const matching = products.find(p => p.id === prod.id);
+      return {
+        ...prod,
+        quantity: matching.quantity || 1
+      };
+    });
+
+    const insertOrderQuery = `
+      INSERT INTO orders (user_id, products, total_price, address, payment_method)
+      VALUES (?, ?, ?, ?, ?)
     `;
-    db.query(orderQuery, [userId, totalPrice, address, paymentMethod], (err, result) => {
-      if (err) {
-        return db.rollback(() => {
-          res.status(500).json({ message: 'Error saving order' });
-        });
-      }
 
-      const orderId = result.insertId;
-      const itemsQuery = `
-        INSERT INTO order_items (order_id, product_id, quantity, price)
-        VALUES ?
-      `;
-      const itemsData = products.map(p => [orderId, p.id, p.quantity, p.price]);
+    db.query(insertOrderQuery, [
+      userId,
+      JSON.stringify(fullProducts),
+      totalPrice,
+      address,
+      paymentMethod
+    ], (err, result) => {
+      if (err) return res.status(500).json({ message: 'Erreur lors de l’enregistrement de la commande' });
 
-      db.query(itemsQuery, [itemsData], (err) => {
-        if (err) {
-          return db.rollback(() => {
-            res.status(500).json({ message: 'Error saving order items' });
-          });
-        }
+      const clearCartQuery = `DELETE FROM cart WHERE user_id = ?`;
+      db.query(clearCartQuery, [userId], (err2) => {
+        if (err2) return res.status(500).json({ message: 'Commande enregistrée, mais erreur lors du vidage du panier' });
 
-        db.commit((err) => {
-          if (err) {
-            return db.rollback(() => {
-              res.status(500).json({ message: 'Transaction commit error' });
-            });
-          }
-          res.status(201).json({ message: 'Order created successfully' });
-        });
+        res.status(201).json({ message: 'Commande enregistrée avec succès' });
       });
     });
   });
 });
+
+
 
 // ======= Endpoints لسلة المشتريات (Cart) =======
 
@@ -293,6 +293,90 @@ app.delete("/cart/:id", (req, res) => {
     res.json({ message: "Item removed from cart successfully" });
   });
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// order
+// app.get("/orders", async (req, res) => {
+//   try {
+//     const [orders] = await db.promise().query("SELECT * FROM orders ORDER BY created_at DESC");
+
+//     // تحويل نص المنتجات إلى كائنات JSON
+//     const formattedOrders = orders.map(order => ({
+//       ...order,
+//       products: JSON.parse(order.products)
+//     }));
+// order
+app.get("/orders", async (req, res) => {
+  try {
+    const [orders] = await db.promise().query("SELECT * FROM orders ORDER BY created_at DESC");
+
+    // تحويل نص المنتجات إلى كائنات JSON إذا كان نصًا
+    const formattedOrders = orders.map(order => {
+      let products = order.products;
+
+      if (typeof products === 'string') {
+        try {
+          products = JSON.parse(products);
+        } catch (error) {
+          console.error("خطأ في JSON.parse:", error);
+          products = []; // أو null أو أي قيمة افتراضية حسب حالتك
+        }
+      }
+
+      return {
+        ...order,
+        products
+      };
+    });
+
+    res.json(formattedOrders);
+  } catch (error) {
+    console.error("خطأ أثناء استرجاع الطلبات:", error);
+    res.status(500).json({ message: "خطأ في السيرفر" });
+  }
+});
+
+
+// ✏️ تعديل عنوان الطلب
+app.put("/orders/:id", async (req, res) => {
+  const { address } = req.body;
+  const { id } = req.params;
+
+  try {
+    await db.promise().query("UPDATE orders SET address = ? WHERE id = ?", [address, id]);
+    res.json({ message: "تم التحديث بنجاح" });
+  } catch (err) {
+    res.status(500).json({ message: "فشل التحديث" });
+  }
+});
+
+// 🗑️ حذف الطلب
+app.delete("/orders/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    await db.promise().query("DELETE FROM orders WHERE id = ?", [id]);
+    res.json({ message: "تم الحذف بنجاح" });
+  } catch (err) {
+    res.status(500).json({ message: "فشل الحذف" });
+  }
+});
+
+
+
+
 
 
 

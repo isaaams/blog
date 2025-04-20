@@ -75,7 +75,7 @@ const Checkout = () => {
         <div className="payment-methods">
           <h3>طريقة الدفع:</h3>
           <div className="payment-options">
-            <label className={formData.paymentMethod === 'creditCard' ? 'active' : ''}>
+            {/* <label className={formData.paymentMethod === 'creditCard' ? 'active' : ''}>
               <input
                 type="radio"
                 name="payment"
@@ -85,7 +85,7 @@ const Checkout = () => {
               />
               <span className="payment-icon">💳</span>
               بطاقة ائتمان
-            </label>
+            </label> */}
             <label className={formData.paymentMethod === 'cash' ? 'active' : ''}>
               <input
                 type="radio"

@@ -9,7 +9,8 @@ import Navigat from "./Navigat";
 import AjouterProduit from './AjouterProduit';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from "axios";
-import OrderTable from "./OrderTable";
+import AdminOrders from "./AdminOrders";
+import Footer from "./Footer"
 
 
 const cartReducer = (state, action) => {
@@ -105,7 +106,8 @@ const App = () => {
             } 
           />
           <Route path="/checkout" element={<Checkout />} />
-          <Route path="/OrderTable" element={ <OrderTable />} />
+          <Route path="/AdminOrders" element={ <AdminOrders />} />
+          <Route path="/Footer" element={ <Footer />} />
          
         </Routes>
       </div>

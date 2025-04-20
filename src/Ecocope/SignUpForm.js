@@ -7,6 +7,7 @@ const SignUpForm = () => {
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  
 
   const handleChange = (e) => {
     setUser({ ...user, [e.target.name]: e.target.value });
